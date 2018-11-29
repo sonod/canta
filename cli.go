@@ -29,6 +29,7 @@ type CLI struct {
 func (cli *CLI) Run(args []string) int {
 	var (
 		version bool
+		run     bool
 	)
 
 	// Define option flag parse
@@ -36,6 +37,7 @@ func (cli *CLI) Run(args []string) int {
 	flags.SetOutput(cli.errStream)
 
 	flags.BoolVar(&version, "version", false, "Print version information and quit.")
+	flags.BoolVar(&run, "run", false, "running command in event payload")
 
 	// Parse commandline flag
 	if err := flags.Parse(args[1:]); err != nil {
@@ -54,26 +56,21 @@ func (cli *CLI) Run(args []string) int {
 		return ExitCodeError
 	}
 
-	if p == "" || strings.Split(p, " ")[0] != "remove-cache:" {
-		log.Println("Event is not remove cache: ", err)
+	if p == "" {
+		log.Println("Payload is null: ", err)
 		return ExitCodeError
 	}
 
-	domain := strings.Split(p, " ")[1]
-	if domain == "" {
-		log.Println("domain is null: ", err)
-		return ExitCodeError
-	}
-	cmd := fmt.Sprintf("grep -lr '%s' /var/cache/nginx/cache/", domain)
-	co, err := exec.Command("sh", "-c", cmd).CombinedOutput()
-	if err != nil {
-		log.Println("failed: ", cmd, err)
-		return ExitCodeError
+	if run {
+		co, err := exec.Command("sh", "-c", p).CombinedOutput()
+		if err != nil {
+			log.Println("failed: ", p, err)
+			return ExitCodeError
+		}
+		log.Println(string(co))
 	}
 
-	log.Println(string(co))
-	log.Println(domain)
-	log.Println(cmd)
+	log.Println(string(p))
 	log.Println("Done")
 
 	return ExitCodeOK
