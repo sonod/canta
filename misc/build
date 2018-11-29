@@ -1,19 +1,19 @@
 #!/bin/bash
-XC_OS='linux'
+
+XC_OS='darwin linux'
 XC_ARCH=amd64
 XC_NAME=canta
 
-VERSION=${1:-$(cat version)}
+VERSION=${1:-$(cat version.go |grep Version |cut -f 2 -d "\"")}
 REVISION=${2:-$(git describe --always)}
 GOVERSION=$(go version)
 BUILDDATE=$(date '+%Y/%m/%d %H:%M:%S %Z')
 ME=$(whoami)
-echo $VERSION
+
 rm -rf pkg && mkdir pkg
 
-GO111MODULE=on go build -ldflags \
-    "-X main.version=${VERSION} -X main.revision=${REVISION} -X \"main.goversion=${GOVERSION}\" -X \"main.builddate=${BUILDDATE}\" -X \"main.builduser=${ME}\"" \
-    -o ${BUILD}/${XC_ARCH}_${DIST}/${XC_NAME}
+gox -os "$XC_OS" -arch "$XC_ARCH" -osarch "!darwin/arm" -ldflags "-X main.version=$VERSION -X main.revision=$REVISION -X \"main.goversion=$GOVERSION\" -X \"main.builddate=$BUILDDATE\" -X \"main.builduser=$ME\"" \
+    -output "pkg/{{.OS}}_{{.Arch}}/$XC_NAME" -tags="$XC_NAME" .
 
 for PLATFORM in $(find ./pkg -mindepth 1 -maxdepth 1 -type d); do
   OSARCH=$(basename $PLATFORM)

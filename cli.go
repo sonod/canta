@@ -48,18 +48,32 @@ func (cli *CLI) Run(args []string) int {
 		return ExitCodeOK
 	}
 
-	command, err := parseEvents()
+	p, err := parseEvents()
 	if err != nil {
 		log.Println("Could not parse event: ", err)
 		return ExitCodeError
 	}
 
-	_, err = exec.Command(command).CombinedOutput()
-	if err != nil {
-		log.Println("failed: ", command, err)
+	if p == "" || strings.Split(p, " ")[0] != "remove-cache:" {
+		log.Println("Event is not remove cache: ", err)
 		return ExitCodeError
 	}
 
+	domain := strings.Split(p, " ")[1]
+	if domain == "" {
+		log.Println("domain is null: ", err)
+		return ExitCodeError
+	}
+	cmd := fmt.Sprintf("grep -lr '%s' /var/cache/nginx/cache/", domain)
+	co, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+	if err != nil {
+		log.Println("failed: ", cmd, err)
+		return ExitCodeError
+	}
+
+	log.Println(string(co))
+	log.Println(domain)
+	log.Println(cmd)
 	log.Println("Done")
 
 	return ExitCodeOK
