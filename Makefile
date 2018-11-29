@@ -1,5 +1,5 @@
 TEST ?= $(shell go list ./...)
-VERSION = $(shell cat version)
+VERSION = $(shell cat version.go |grep Version |cut -f 2 -d "\"")
 REVISION = $(shell git describe --always)
 
 INFO_COLOR=\033[1;34m
@@ -35,3 +35,7 @@ lint: ## Exec golint
 build: ## Build as linux binary
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Building$(RESET)"
 	BUILD=$(BUILD) DIST=$(DIST) misc/build
+
+ghr: ## Upload to Github releases without token check
+	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Releasing for Github$(RESET)"
+	ghr -u noda v$(VERSION) pkg
