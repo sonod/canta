@@ -4,7 +4,24 @@
 canta reads the payload of the consul event and performs deletion of Nginx's cache.
 
 ## Usage
+
+consul eventのpayloadを出力
+```
 consul watch -type event -name "hello" ./canta
+```
+
+```
+consul event -name "hello" 'aa'
+```
+
+consul eventのpayloadを実行する場合
+```
+consul watch -type event -name "hello" ./canta --run
+```
+
+```
+consul event -name "hello" 'ls'
+```
 
 ## Install
 
