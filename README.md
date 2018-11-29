@@ -1,10 +1,10 @@
-# canta
-
-
+# CANTA - ConsAl eveNT Accepter
 
 ## Description
+canta reads the payload of the consul event and performs deletion of Nginx's cache.
 
 ## Usage
+consul watch -type event -name "hello" ./canta
 
 ## Install
 
