@@ -1,24 +1,40 @@
 # CANTA - ConsAl eveNT Accepter
 
 ## Description
-canta reads the payload of the consul event and performs deletion of Nginx's cache.
+canta reads, displays or executes the payload of consul event.
 
 ## Usage
 
-consul eventのpayloadを出力
 ```
-consul watch -type event -name "hello" ./canta
-```
-
-```
-consul event -name "hello" 'aa'
-```
-
-consul eventのpayloadを実行する場合
-```
-consul watch -type event -name "hello" ./canta --run
+Usage of canta:
+  canta [OPTIONS]
+OPTIONS
+  --version  Print version information and quit.
+  --run  running command in event payload
 ```
 
+
+#### with consul
+- Display the payload of consul event.
+
+*Watch the consul event.*
+```
+consul watch -type event -name "hello" canta
+```
+
+*Fire the event.*
+```
+consul event -name "hello" 'hoge'
+```
+
+- Executes the payload of consul event.
+
+*Watch the consul event.*
+```
+consul watch -type event -name "hello" canta --run
+```
+
+*Fire the event.*
 ```
 consul event -name "hello" 'ls'
 ```

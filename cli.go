@@ -10,6 +10,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // Exit codes are int values that represent an exit code for a particular error.
@@ -50,29 +52,36 @@ func (cli *CLI) Run(args []string) int {
 		return ExitCodeOK
 	}
 
-	p, err := parseEvents()
-	if err != nil {
-		log.Println("Could not parse event: ", err)
-		return ExitCodeError
-	}
-
-	if p == "" {
-		log.Println("Payload is null: ", err)
-		return ExitCodeError
-	}
-
-	if run {
-		co, err := exec.Command("sh", "-c", p).CombinedOutput()
+	if terminal.IsTerminal(0) {
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n  %s [OPTIONS] \nOPTIONS\n", os.Args[0], os.Args[0])
+		fmt.Fprint(os.Stderr, "  --version  Print version information and quit.\n")
+		fmt.Fprint(os.Stderr, "  --run  running command in event payload\n")
+	} else {
+		p, err := parseEvents()
 		if err != nil {
-			log.Println("failed: ", p, err)
+			log.Println("Could not parse event: ", err)
 			return ExitCodeError
 		}
-		log.Println(string(co))
+
+		if p == "" {
+			log.Println("Payload is null: ", err)
+			return ExitCodeError
+		}
+
+		if run {
+			co, err := exec.Command("sh", "-c", p).CombinedOutput()
+			if err != nil {
+				log.Println("failed: ", p, err)
+				return ExitCodeError
+			}
+			log.Println(string(co))
+		}
+
+		log.Println(string(p))
+		log.Println("Done")
+
+		return ExitCodeOK
 	}
-
-	log.Println(string(p))
-	log.Println("Done")
-
 	return ExitCodeOK
 }
 
