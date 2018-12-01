@@ -35,7 +35,39 @@ func TestParseConsulEvents(t *testing.T) {
 		want    *ConsulEvent
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		{
+			name: "Success: eventInPayload",
+			args: args{
+				in: bytes.NewReader([]byte(`
+				[
+				  {
+				      "ID": "f83fa997-91c5-02b7-f3b3-70949f3e9f55",
+				      "Name": "hello",
+				      "Payload": "SGV5ISBZb3UgYXJlIGluIHRoZXJlISBZb3VyIGhvdXNlIGlzIGhhdW50ZWQh",
+				      "NodeFilter": "",
+				      "ServiceFilter": "",
+				      "TagFilter": "",
+				      "Version": 1,
+				      "LTime": 52494
+				  }
+				]
+				`)),
+			},
+			want: &ConsulEvent{
+				ID:      "f83fa997-91c5-02b7-f3b3-70949f3e9f55",
+				Name:    "hello",
+				Payload: []byte("Hey! You are in there! Your house is haunted!"),
+				LTime:   52494,
+			},
+		},
+		{
+			name: "Failed: eventEmptyPayload",
+			args: args{
+				in: bytes.NewReader([]byte(`[]`)),
+			},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
