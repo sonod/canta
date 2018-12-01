@@ -74,10 +74,10 @@ func (cli *CLI) Run(args []string) int {
 				log.Println("failed: ", p, err)
 				return ExitCodeError
 			}
-			log.Println(string(co))
+			log.Println("Execute command:", string(co))
 		}
 
-		log.Println(string(p))
+		log.Println("Consul event pyload:", string(p))
 		log.Println("Done")
 
 		return ExitCodeOK
