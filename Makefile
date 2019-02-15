@@ -21,6 +21,7 @@ ci: depsdev test lint ## Run test and more...
 depsdev: ## Installing dependencies for development
 	$(GO) get -u github.com/golang/lint/golint
 	$(GO) get -u github.com/tcnksm/ghr
+	GO111MODULE=off go get github.com/motemen/gobump/cmd/gobump
 
 test: ## Run test
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Testing$(RESET)"
@@ -38,4 +39,7 @@ build: ## Build as linux binary
 
 ghr: ## Upload to Github releases without token check
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Releasing for Github$(RESET)"
-	ghr -u noda v$(VERSION) pkg
+	$(eval ver = v$(shell gobump show -r ./))
+	ghr -u sonod ${ver} pkg
+
+.PHONY: default test

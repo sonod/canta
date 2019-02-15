@@ -2,7 +2,7 @@ module git.pepabo.com/noda/canta
 
 require (
 	github.com/Songmu/retry v0.1.0 // indirect
-	github.com/golang/lint v0.0.0-20181026193005-c67002cb31c3 // indirect
+	github.com/golang/lint v0.0.0-20181217174547-8f45f776aaf1 // indirect
 	github.com/google/go-github v17.0.0+incompatible // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.0.0 // indirect
